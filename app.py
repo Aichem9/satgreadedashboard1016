@@ -24,11 +24,11 @@ def plot_histograms(df):
 st.title("모의고사 등급별 인원수 분포")
 
 # File uploader
-uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
+uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type=["csv"])
 
 if uploaded_file:
-    # Load the uploaded file
-    df = pd.read_excel(uploaded_file)
+    # Load the uploaded CSV file
+    df = pd.read_csv(uploaded_file)
     
     # Plot histograms for each subject
     plot_histograms(df)
