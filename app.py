@@ -21,7 +21,7 @@ def plot_histograms(df):
         st.pyplot(plt)
 
 # Streamlit app
-st.title("Subject-wise Grade Distribution Histograms")
+st.title("모의고사 등급별 인원수 분포")
 
 # File uploader
 uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
