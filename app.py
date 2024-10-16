@@ -2,12 +2,12 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
-# Function to plot histograms for each subject using Altair and display them in a 3-column layout
+# Function to plot histograms for each subject using Altair and display them in a 2-column layout
 def plot_histograms(df):
     subjects = df['구   분'].dropna().unique()
     
-    # Create columns to hold 3 charts per row
-    cols = st.columns(3)
+    # Create columns to hold 2 charts per row
+    cols = st.columns(2)
     col_index = 0
 
     for subject in subjects:
@@ -28,8 +28,8 @@ def plot_histograms(df):
             y='Number of Students',
             color=alt.value('#4e79a7')  # Custom color
         ).properties(
-            width=150,  # Set chart width
-            height=150  # Set chart height
+            width=300,  # Set chart width
+            height=300  # Set chart height
         )
 
         # Display the chart in the respective column
@@ -39,10 +39,10 @@ def plot_histograms(df):
         # Move to the next column
         col_index += 1
         
-        # Reset columns after every 3 subjects
-        if col_index >= 3:
+        # Reset columns after every 2 subjects
+        if col_index >= 2:
             col_index = 0
-            cols = st.columns(3)
+            cols = st.columns(2)
 
 # Streamlit app
 st.title("모의고사 등급별 인원수 분포")
