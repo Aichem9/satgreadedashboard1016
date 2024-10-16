@@ -2,65 +2,86 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
-# Function to plot histograms for each subject using Altair and display them in a 2-column layout
-def plot_histograms(df):
-    subjects = df['구   분'].dropna().unique()
+# Function to plot and compare histograms for two subjects from two datasets
+def plot_comparison_histograms(df1, df2):
+    subjects1 = df1['구   분'].dropna().unique()
+    subjects2 = df2['구   분'].dropna().unique()
+    
+    # Ensure both datasets have the same subjects to compare
+    common_subjects = set(subjects1).intersection(subjects2)
     
     # Define a list of colors for different subjects
     colors = ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f']
     
-    # Create columns to hold 2 charts per row
+    # Create columns to hold 2 charts per row for comparison
     cols = st.columns(2)
-    col_index = 0
-    color_index = 0
-
-    for subject in subjects:
-        # Filter the data for the current subject
-        subject_data = df[df['구   분'] == subject].iloc[0, 3:12]
-        grades = subject_data.index
-        students = subject_data.values
+    
+    for idx, subject in enumerate(common_subjects):
+        # Filter the data for the current subject in both datasets
+        subject_data1 = df1[df1['구   분'] == subject].iloc[0, 3:12]
+        subject_data2 = df2[df2['구   분'] == subject].iloc[0, 3:12]
         
+        grades1 = subject_data1.index
+        students1 = subject_data1.values
+        
+        grades2 = subject_data2.index
+        students2 = subject_data2.values
+
         # Prepare data for the bar chart
-        chart_data = pd.DataFrame({
-            'Grades': grades,
-            'Number of Students': students
+        chart_data1 = pd.DataFrame({
+            'Grades': grades1,
+            'Number of Students': students1
         })
 
-        # Create an Altair bar chart with a unique color for each subject
-        chart = alt.Chart(chart_data).mark_bar().encode(
+        chart_data2 = pd.DataFrame({
+            'Grades': grades2,
+            'Number of Students': students2
+        })
+
+        # Create Altair bar charts for both datasets
+        chart1 = alt.Chart(chart_data1).mark_bar().encode(
             x=alt.X('Grades', sort=None),
             y='Number of Students',
-            color=alt.value(colors[color_index % len(colors)])  # Custom color for each subject
+            color=alt.value(colors[idx % len(colors)])  # Custom color for each subject
         ).properties(
             width=300,  # Set chart width
             height=300  # Set chart height
         )
 
-        # Display the chart in the respective column
-        cols[col_index].subheader(f'{subject}')
-        cols[col_index].altair_chart(chart)
+        chart2 = alt.Chart(chart_data2).mark_bar().encode(
+            x=alt.X('Grades', sort=None),
+            y='Number of Students',
+            color=alt.value(colors[(idx+1) % len(colors)])  # Custom color for each subject
+        ).properties(
+            width=300,  # Set chart width
+            height=300  # Set chart height
+        )
+
+        # Display the charts side by side for comparison
+        cols[0].subheader(f'{subject} - File 1')
+        cols[0].altair_chart(chart1)
         
-        # Move to the next column and color
-        col_index += 1
-        color_index += 1
-        
-        # Reset columns after every 2 subjects
-        if col_index >= 2:
-            col_index = 0
+        cols[1].subheader(f'{subject} - File 2')
+        cols[1].altair_chart(chart2)
+
+        # Start a new row every 2 subjects
+        if (idx + 1) % 2 == 0:
             cols = st.columns(2)
 
 # Streamlit app
-st.title("모의고사 등급별 인원수 분포")
+st.title("두 파일의 모의고사 등급별 인원수 분포 비교")
 
 # Display the instruction message
-st.markdown("**UNIV 데이터를 다운 받고 csv 확장자로 파일을 변환해주세요.**")
+st.markdown("**UNIV 데이터를 다운 받고 csv 확장자로 파일을 변환해주세요. 두 개의 파일을 업로드하고 비교하세요.**")
 
-# File uploader
-uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type=["csv"])
+# File uploader for two files
+uploaded_file1 = st.file_uploader("CSV 파일 1을 업로드하세요", type=["csv"], key='file1')
+uploaded_file2 = st.file_uploader("CSV 파일 2을 업로드하세요", type=["csv"], key='file2')
 
-if uploaded_file:
-    # Load the uploaded CSV file
-    df = pd.read_csv(uploaded_file)
+if uploaded_file1 and uploaded_file2:
+    # Load the uploaded CSV files
+    df1 = pd.read_csv(uploaded_file1)
+    df2 = pd.read_csv(uploaded_file2)
     
-    # Plot histograms for each subject
-    plot_histograms(df)
+    # Plot and compare histograms for each subject
+    plot_comparison_histograms(df1, df2)
