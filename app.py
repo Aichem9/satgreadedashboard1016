@@ -1,8 +1,7 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 
-# Function to plot histograms for each subject
+# Function to plot histograms for each subject using Streamlit's bar chart
 def plot_histograms(df):
     subjects = df['구   분'].dropna().unique()
     
@@ -12,13 +11,14 @@ def plot_histograms(df):
         grades = subject_data.index
         students = subject_data.values
         
-        # Plot the histogram for the current subject
-        plt.figure(figsize=(8, 6))
-        plt.bar(grades, students)
-        plt.title(f'{subject} - Grade Distribution')
-        plt.xlabel('Grades')
-        plt.ylabel('Number of Students')
-        st.pyplot(plt)
+        # Prepare data for the bar chart
+        chart_data = pd.DataFrame({
+            'Grades': grades,
+            'Number of Students': students
+        })
+
+        st.subheader(f'{subject} - Grade Distribution')
+        st.bar_chart(chart_data.set_index('Grades'))
 
 # Streamlit app
 st.title("모의고사 등급별 인원수 분포")
