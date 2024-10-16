@@ -52,6 +52,9 @@ def plot_histograms(df):
 # Streamlit app
 st.title("모의고사 등급별 인원수 분포")
 
+# Display the instruction message
+st.info("UNIV 데이터를 다운 받고 csv 확장자로 파일을 변환해주세요.")
+
 # File uploader
 uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type=["csv"])
 
