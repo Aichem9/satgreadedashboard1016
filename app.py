@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 
-# Function to plot histograms for each subject using Streamlit's bar chart
+# Function to plot histograms for each subject using Altair for better customization
 def plot_histograms(df):
     subjects = df['구   분'].dropna().unique()
     
@@ -18,7 +19,18 @@ def plot_histograms(df):
         })
 
         st.subheader(f'{subject} - Grade Distribution')
-        st.bar_chart(chart_data.set_index('Grades'))
+
+        # Create an Altair bar chart
+        chart = alt.Chart(chart_data).mark_bar().encode(
+            x=alt.X('Grades', sort=None),
+            y='Number of Students',
+            color=alt.value('#4e79a7')  # Custom color
+        ).properties(
+            width=400,  # Set chart width
+            height=400  # Set chart height
+        )
+        
+        st.altair_chart(chart)
 
 # Streamlit app
 st.title("모의고사 등급별 인원수 분포")
