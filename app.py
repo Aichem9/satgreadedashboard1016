@@ -6,9 +6,13 @@ import altair as alt
 def plot_histograms(df):
     subjects = df['구   분'].dropna().unique()
     
+    # Define a list of colors for different subjects
+    colors = ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f']
+    
     # Create columns to hold 2 charts per row
     cols = st.columns(2)
     col_index = 0
+    color_index = 0
 
     for subject in subjects:
         # Filter the data for the current subject
@@ -22,11 +26,11 @@ def plot_histograms(df):
             'Number of Students': students
         })
 
-        # Create an Altair bar chart
+        # Create an Altair bar chart with a unique color for each subject
         chart = alt.Chart(chart_data).mark_bar().encode(
             x=alt.X('Grades', sort=None),
             y='Number of Students',
-            color=alt.value('#4e79a7')  # Custom color
+            color=alt.value(colors[color_index % len(colors)])  # Custom color for each subject
         ).properties(
             width=300,  # Set chart width
             height=300  # Set chart height
@@ -36,8 +40,9 @@ def plot_histograms(df):
         cols[col_index].subheader(f'{subject}')
         cols[col_index].altair_chart(chart)
         
-        # Move to the next column
+        # Move to the next column and color
         col_index += 1
+        color_index += 1
         
         # Reset columns after every 2 subjects
         if col_index >= 2:
